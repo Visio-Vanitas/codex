@@ -1377,6 +1377,7 @@ async fn run_ratatui_app(
     ) {
         config.startup_warnings.push(w);
     }
+    crate::style::set_transparent_background(config.tui_transparent_background);
 
     set_default_client_residency_requirement(config.enforce_residency.value());
     let active_profile = config.active_profile.clone();

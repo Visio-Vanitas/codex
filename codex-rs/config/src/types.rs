@@ -581,6 +581,13 @@ pub struct Tui {
     #[serde(default)]
     pub theme: Option<String>,
 
+    /// When `true`, omit explicit background fills for major TUI surfaces so
+    /// the terminal's own background or transparency shows through.
+    ///
+    /// Defaults to `false`.
+    #[serde(default)]
+    pub transparent_background: bool,
+
     /// Startup tooltip availability NUX state persisted by the TUI.
     #[serde(default)]
     pub model_availability_nux: ModelAvailabilityNuxConfig,

@@ -4138,6 +4138,7 @@ impl ChatComposer {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::style::with_transparent_background_for_test;
     use crate::test_support::PathBufExt;
     use crate::test_support::test_path_buf;
     use image::ImageBuffer;
@@ -4482,6 +4483,23 @@ mod tests {
                     .handle_key_event(KeyEvent::new(KeyCode::Char('c'), KeyModifiers::NONE));
             },
         );
+    }
+
+    #[test]
+    fn transparent_background_snapshot() {
+        with_transparent_background_for_test(/*enabled*/ true, || {
+            snapshot_composer_state(
+                "transparent_background",
+                /*enhanced_keys_supported*/ true,
+                |composer| {
+                    composer.set_text_content(
+                        "Transparent background".to_string(),
+                        Vec::new(),
+                        Vec::new(),
+                    );
+                },
+            );
+        });
     }
 
     #[test]
