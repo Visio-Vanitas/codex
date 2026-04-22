@@ -27,6 +27,7 @@ impl App {
         self.apply_runtime_policy_overrides(&mut config);
         self.config = config;
         self.chat_widget.sync_plugin_mentions_config(&self.config);
+        self.sync_tui_background_mode_selection(self.config.tui_background_mode);
         Ok(())
     }
 
@@ -280,6 +281,7 @@ impl App {
 
         let memory_tool_was_enabled = self.config.features.enabled(Feature::MemoryTool);
         self.config = next_config;
+        self.sync_tui_background_mode_selection(self.config.tui_background_mode);
         let show_memory_enable_notice =
             feature_updates_to_apply.iter().any(|(feature, enabled)| {
                 *feature == Feature::MemoryTool && *enabled && !memory_tool_was_enabled
@@ -511,6 +513,19 @@ impl App {
         self.chat_widget.set_tui_theme(Some(name));
     }
 
+    pub(super) fn sync_tui_background_mode_selection(
+        &mut self,
+        mode: codex_config::types::TuiBackgroundMode,
+    ) {
+        self.config.tui_background_mode = mode;
+        self.chat_widget.set_tui_background_mode(mode);
+        crate::style::set_tui_background_mode(mode);
+    }
+
+    pub(super) fn restore_runtime_tui_background_mode_from_config(&self) {
+        crate::style::set_tui_background_mode(self.config.tui_background_mode);
+    }
+
     pub(super) fn restore_runtime_theme_from_config(&self) {
         if let Some(name) = self.config.tui_theme.as_deref()
             && let Some(theme) =
@@ -707,6 +722,22 @@ mod tests {
         assert_eq!(
             app.chat_widget.config_ref().tui_theme.as_deref(),
             Some("dracula")
+        );
+    }
+
+    #[tokio::test]
+    async fn sync_tui_background_mode_selection_updates_chat_widget_config_copy() {
+        let mut app = make_test_app().await;
+
+        app.sync_tui_background_mode_selection(codex_config::types::TuiBackgroundMode::Transparent);
+
+        assert_eq!(
+            app.config.tui_background_mode,
+            codex_config::types::TuiBackgroundMode::Transparent
+        );
+        assert_eq!(
+            app.chat_widget.config_ref().tui_background_mode,
+            codex_config::types::TuiBackgroundMode::Transparent
         );
     }
 }

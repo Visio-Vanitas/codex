@@ -344,7 +344,7 @@ impl ChatWidget {
                 self.open_status_line_setup();
             }
             SlashCommand::Theme => {
-                self.open_theme_picker();
+                self.open_theme_menu();
             }
             SlashCommand::Ps => {
                 self.add_ps_output();
@@ -546,6 +546,11 @@ impl ChatWidget {
             SlashCommand::Mcp => match trimmed.to_ascii_lowercase().as_str() {
                 "verbose" => self.add_mcp_output(McpServerStatusDetail::Full),
                 _ => self.add_error_message("Usage: /mcp [verbose]".to_string()),
+            },
+            SlashCommand::Theme => match trimmed.to_ascii_lowercase().as_str() {
+                "syntax" => self.open_theme_picker(),
+                "background" => self.open_theme_background_picker(),
+                _ => self.add_error_message("Usage: /theme [syntax|background]".to_string()),
             },
             SlashCommand::Rename if !trimmed.is_empty() => {
                 if !self.ensure_thread_rename_allowed() {

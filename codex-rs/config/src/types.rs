@@ -532,6 +532,38 @@ pub struct ModelAvailabilityNuxConfig {
     pub shown_count: HashMap<String, u32>,
 }
 
+/// Controls how the TUI paints panel and diff backgrounds.
+#[derive(Serialize, Deserialize, Debug, Clone, Copy, PartialEq, Eq, Default, JsonSchema)]
+#[serde(rename_all = "kebab-case")]
+pub enum TuiBackgroundMode {
+    /// Use the default Codex behavior.
+    #[default]
+    Auto,
+    /// Always paint Codex backgrounds (current default visual behavior).
+    Opaque,
+    /// Preserve standard UI backgrounds while restoring classic diff styling.
+    Classic,
+    /// Avoid painting Codex backgrounds so terminal background shows through.
+    Transparent,
+}
+
+impl TuiBackgroundMode {
+    pub const fn as_str(self) -> &'static str {
+        match self {
+            Self::Auto => "auto",
+            Self::Opaque => "opaque",
+            Self::Classic => "classic",
+            Self::Transparent => "transparent",
+        }
+    }
+}
+
+impl fmt::Display for TuiBackgroundMode {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.write_str(self.as_str())
+    }
+}
+
 /// Collection of settings that are specific to the TUI.
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Default, JsonSchema)]
 #[schemars(deny_unknown_fields)]
@@ -580,6 +612,15 @@ pub struct Tui {
     /// Use `/theme` in the TUI or see `$CODEX_HOME/themes` for custom themes.
     #[serde(default)]
     pub theme: Option<String>,
+
+    /// Controls whether Codex paints explicit panel/diff backgrounds.
+    ///
+    /// - `auto` (default): use Codex default behavior.
+    /// - `opaque`: always paint Codex backgrounds.
+    /// - `classic`: keep standard UI backgrounds and restore the classic diff style.
+    /// - `transparent`: avoid painting explicit backgrounds.
+    #[serde(default, rename = "background_mode")]
+    pub background_mode: TuiBackgroundMode,
 
     /// Startup tooltip availability NUX state persisted by the TUI.
     #[serde(default)]

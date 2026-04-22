@@ -2018,6 +2018,15 @@
           "description": "Enable animations (welcome screen, shimmer effects, spinners). Defaults to `true`.",
           "type": "boolean"
         },
+        "background_mode": {
+          "allOf": [
+            {
+              "$ref": "#/definitions/TuiBackgroundMode"
+            }
+          ],
+          "default": "auto",
+          "description": "Controls whether Codex paints explicit panel/diff backgrounds.\n\n- `auto` (default): use Codex default behavior. - `opaque`: always paint Codex backgrounds. - `classic`: keep standard UI backgrounds and restore the classic diff style. - `transparent`: avoid painting explicit backgrounds."
+        },
         "model_availability_nux": {
           "allOf": [
             {
@@ -2082,6 +2091,39 @@
         }
       },
       "type": "object"
+    },
+    "TuiBackgroundMode": {
+      "description": "Controls how the TUI paints panel and diff backgrounds.",
+      "oneOf": [
+        {
+          "description": "Use the default Codex behavior.",
+          "enum": [
+            "auto"
+          ],
+          "type": "string"
+        },
+        {
+          "description": "Always paint Codex backgrounds (current default visual behavior).",
+          "enum": [
+            "opaque"
+          ],
+          "type": "string"
+        },
+        {
+          "description": "Preserve standard UI backgrounds while restoring classic diff styling.",
+          "enum": [
+            "classic"
+          ],
+          "type": "string"
+        },
+        {
+          "description": "Avoid painting Codex backgrounds so terminal background shows through.",
+          "enum": [
+            "transparent"
+          ],
+          "type": "string"
+        }
+      ]
     },
     "UriBasedFileOpener": {
       "oneOf": [

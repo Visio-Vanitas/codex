@@ -456,6 +456,7 @@ impl App {
             }
         }
         self.config = config.clone();
+        self.sync_tui_background_mode_selection(self.config.tui_background_mode);
         match app_server
             .start_thread_with_session_start_source(&config, session_start_source)
             .await
@@ -686,6 +687,7 @@ impl App {
             Ok(resumed) => {
                 self.shutdown_current_thread(app_server).await;
                 self.config = resume_config;
+                self.sync_tui_background_mode_selection(self.config.tui_background_mode);
                 tui.set_notification_settings(
                     self.config.tui_notifications.method,
                     self.config.tui_notifications.condition,

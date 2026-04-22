@@ -159,6 +159,8 @@ mod style;
 mod terminal_palette;
 mod terminal_title;
 mod text_formatting;
+mod theme_background_picker;
+mod theme_menu;
 mod theme_picker;
 mod tooltips;
 mod tui;
@@ -1383,6 +1385,7 @@ async fn run_ratatui_app(
     ) {
         config.startup_warnings.push(w);
     }
+    crate::style::set_tui_background_mode(config.tui_background_mode);
 
     set_default_client_residency_requirement(config.enforce_residency.value());
     let active_profile = config.active_profile.clone();

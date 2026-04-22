@@ -110,6 +110,7 @@ use codex_chatgpt::connectors;
 use codex_config::ConfigLayerStackOrdering;
 use codex_config::types::ApprovalsReviewer;
 use codex_config::types::Notifications;
+use codex_config::types::TuiBackgroundMode;
 use codex_config::types::WindowsSandboxModeToml;
 use codex_core_skills::model::SkillMetadata;
 use codex_features::FEATURES;
@@ -7683,7 +7684,15 @@ impl ChatWidget {
         }
         preview_data
     }
-    fn open_theme_picker(&mut self) {
+    pub(crate) fn open_theme_menu(&mut self) {
+        let params = crate::theme_menu::build_theme_menu_params(
+            self.config.tui_theme.as_deref(),
+            self.config.tui_background_mode,
+        );
+        self.bottom_pane.show_selection_view(params);
+    }
+
+    pub(crate) fn open_theme_picker(&mut self) {
         let codex_home = crate::legacy_core::config::find_codex_home().ok();
         let terminal_width = self
             .last_rendered_width
@@ -7693,6 +7702,13 @@ impl ChatWidget {
             self.config.tui_theme.as_deref(),
             codex_home.as_deref(),
             terminal_width,
+        );
+        self.bottom_pane.show_selection_view(params);
+    }
+
+    pub(crate) fn open_theme_background_picker(&mut self) {
+        let params = crate::theme_background_picker::build_theme_background_picker_params(
+            self.config.tui_background_mode,
         );
         self.bottom_pane.show_selection_view(params);
     }
@@ -9909,6 +9925,11 @@ impl ChatWidget {
     /// Set the syntax theme override in the widget's config copy.
     pub(crate) fn set_tui_theme(&mut self, theme: Option<String>) {
         self.config.tui_theme = theme;
+    }
+
+    /// Set background rendering mode in the widget's config copy.
+    pub(crate) fn set_tui_background_mode(&mut self, mode: TuiBackgroundMode) {
+        self.config.tui_background_mode = mode;
     }
 
     /// Set the model in the widget's config copy and stored collaboration mode.

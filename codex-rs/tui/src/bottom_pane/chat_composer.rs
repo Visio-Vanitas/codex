@@ -7329,6 +7329,38 @@ mod tests {
     }
 
     #[test]
+    fn slash_theme_background_dispatches_inline_args() {
+        use crossterm::event::KeyCode;
+        use crossterm::event::KeyEvent;
+        use crossterm::event::KeyModifiers;
+
+        let (tx, _rx) = unbounded_channel::<AppEvent>();
+        let sender = AppEventSender::new(tx);
+        let mut composer = ChatComposer::new(
+            /*has_input_focus*/ true,
+            sender,
+            /*enhanced_keys_supported*/ false,
+            "Ask Codex to do anything".to_string(),
+            /*disable_paste_burst*/ false,
+        );
+
+        composer.set_text_content("/theme background".to_string(), Vec::new(), Vec::new());
+        composer.active_popup = ActivePopup::None;
+
+        let (result, _needs_redraw) =
+            composer.handle_key_event(KeyEvent::new(KeyCode::Enter, KeyModifiers::NONE));
+
+        match result {
+            InputResult::CommandWithArgs(cmd, args, text_elements) => {
+                assert_eq!(cmd, SlashCommand::Theme);
+                assert_eq!(args, "background");
+                assert!(text_elements.is_empty());
+            }
+            other => panic!("expected CommandWithArgs for /theme background, got {other:?}"),
+        }
+    }
+
+    #[test]
     fn file_completion_preserves_large_paste_placeholder_elements() {
         use crossterm::event::KeyCode;
         use crossterm::event::KeyEvent;

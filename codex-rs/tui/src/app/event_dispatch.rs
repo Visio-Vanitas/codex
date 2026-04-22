@@ -1596,6 +1596,12 @@ impl App {
             AppEvent::TerminalTitleSetupCancelled => {
                 self.chat_widget.cancel_terminal_title_setup();
             }
+            AppEvent::OpenThemeSyntaxPicker => {
+                self.chat_widget.open_theme_picker();
+            }
+            AppEvent::OpenThemeBackgroundPicker => {
+                self.chat_widget.open_theme_background_picker();
+            }
             AppEvent::SyntaxThemeSelected { name } => {
                 let edit = crate::legacy_core::config::edit::syntax_theme_edit(&name);
                 let apply_result = ConfigEditsBuilder::new(&self.config.codex_home)
@@ -1621,6 +1627,24 @@ impl App {
                         tracing::error!(error = %err, "failed to persist theme selection");
                         self.chat_widget
                             .add_error_message(format!("Failed to save theme: {err}"));
+                    }
+                }
+            }
+            AppEvent::TuiBackgroundModeSelected { mode } => {
+                let edit = crate::legacy_core::config::edit::tui_background_mode_edit(mode);
+                let apply_result = ConfigEditsBuilder::new(&self.config.codex_home)
+                    .with_edits([edit])
+                    .apply()
+                    .await;
+                match apply_result {
+                    Ok(()) => {
+                        self.sync_tui_background_mode_selection(mode);
+                    }
+                    Err(err) => {
+                        self.restore_runtime_tui_background_mode_from_config();
+                        tracing::error!(error = %err, "failed to persist background mode");
+                        self.chat_widget
+                            .add_error_message(format!("Failed to save background mode: {err}"));
                     }
                 }
             }

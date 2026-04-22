@@ -35,6 +35,7 @@ use crate::bottom_pane::StatusLineItem;
 use crate::bottom_pane::TerminalTitleItem;
 use crate::chatwidget::UserMessage;
 use codex_config::types::ApprovalsReviewer;
+use codex_config::types::TuiBackgroundMode;
 use codex_features::Feature;
 use codex_plugin::PluginCapabilitySummary;
 use codex_protocol::config_types::CollaborationModeMask;
@@ -674,9 +675,20 @@ pub(crate) enum AppEvent {
     /// Dismiss the terminal-title setup UI without changing config.
     TerminalTitleSetupCancelled,
 
+    /// Open the syntax-theme picker from the top-level theme menu.
+    OpenThemeSyntaxPicker,
+
+    /// Open the background-mode picker from the top-level theme menu.
+    OpenThemeBackgroundPicker,
+
     /// Apply a user-confirmed syntax theme selection.
     SyntaxThemeSelected {
         name: String,
+    },
+
+    /// Apply a user-confirmed TUI background mode selection.
+    TuiBackgroundModeSelected {
+        mode: TuiBackgroundMode,
     },
 }
 
